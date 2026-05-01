@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="game-container">
+    
+    <div id="start-screen">
+      <p id="intro-text">Welcome to the Neighborhood. Press START to begin.</p>
+      <button id="start-btn" onclick="startGame()">START GAME</button>
+    </div>
+
+    <div id="main-game-interface" class="hidden">
+      <div id="stats-bar">
+        <span id="clock-display">Day 1 | 06:00</span>
+        <div>Balance: <span id="balance">$35</span></div>
+      </div>
+
+      <div id="event-box">
+        <p id="main-challenge-text">Waiting for mission...</p>
+      </div>
+
+      <div id="actions">
+        <input type="number" id="amount" placeholder="Amount">
+        <div class="button-grid">
+          <button onclick="updateBalance('spend')">SPEND</button>
+          <button onclick="updateBalance('request')">REQUEST</button>
+          <button onclick="showMenu('shop')">SHOP</button>
+          <button onclick="showMenu('map')">MAP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="map-menu" class="overlay hidden">
+    <div class="menu-box">
+      <h2>TACTICAL MAP</h2>
+      <div id="map-viewport">
+        <img src="https://i.postimg.cc/13HRW0fF/2026-04-30-10b-Kleki-(1).png" id="tactical-map-img">
+      </div>
+      <div class="map-controls">
+        <button onclick="adjustZoom(0.2)">➕</button>
+        <button onclick="adjustZoom(-0.2)">➖</button>
+        <button onclick="resetZoom()">🔄</button>
+      </div>
+      <button onclick="closeMenus()" class="close-btn">CLOSE MAP</button>
+    </div>
+  </div>
+<div id="shop-menu" class="overlay hidden">
+  <div class="menu-box">
+    <h2>NEIGHBORHOOD SHOP</h2>
+    <div style="text-align: left; margin: 15px 0; color: #fff; font-size: 0.8rem;">
+      <p>🛒 Seller's Permit: $5,000 <button onclick="buyItem(5000, 'The Sellers Permit')" style="padding:2px 5px; font-size:0.6rem; float:right;">BUY</button></p>
+      <p>🛠 A Better Tool: $1,200 <button onclick="buyItem(1200,  'A Better Tool')" style="padding:2px 5px; font-size:0.6rem; float:right;">BUY</button></p>
+      <p>🔋 Unlock Garage: $500 <button onclick="buyItem(500, 'Unlocked Garage')" style="padding:2px 5px; font-size:0.6rem; float:right;">BUY</button></p>
+      <p>🐦‍🔥 A Magic Pet: $700 <button onclick="buyItem(700, 'A Magic Pet')" style="padding:2px 5px; font-size:0.6rem; float:right;">BUY</button></p>
+      <p>🌲 Unlock Forest: $5,000 <button onclick="buyItem(5000, 'Unlocked Forest')" style="padding:2px 5px; font-size:0.6rem; float:right;">BUY</button></p>
+    </div>
+    <button onclick="closeMenus()" class="close-btn">BACK TO GAME</button>
+  </div>
+</div>
+
+  <script src="script.js"></script>
+</body>
+</html>

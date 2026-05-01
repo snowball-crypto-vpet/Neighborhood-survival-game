@@ -1,0 +1,97 @@
+let currentBalance = 35;
+let gameMinutes = 360; 
+let currentZoom = 1;
+let isDragging = false;
+let startX, startY;
+let translateX = 0, translateY = 0;
+
+// 1. GAME FLOW
+function startGame() {
+  document.getElementById('start-screen').classList.add('hidden');
+  document.getElementById('main-game-interface').classList.remove('hidden');
+  document.getElementById('main-challenge-text').innerText = "Day 1: Scavenge the yard for 10 minutes.";
+}
+
+function updateBalance(type) {
+  const amountInput = document.getElementById('amount');
+  const amount = parseInt(amountInput.value);
+  if (isNaN(amount)) return;
+  
+  if (type === 'spend') currentBalance -= amount;
+  else currentBalance += amount;
+
+  document.getElementById('balance').innerText = `$${currentBalance.toLocaleString()}`;
+  amountInput.value = '';
+}
+
+// 2. CLOCK LOGIC
+setInterval(() => {
+  gameMinutes++;
+  let hours = Math.floor(gameMinutes / 60);
+  let mins = gameMinutes % 60;
+  let timeStr = (hours < 10 ? "0"+hours : hours) + ":" + (mins < 10 ? "0"+mins : mins);
+  document.getElementById('clock-display').innerText = `Day 1 | ${timeStr}`;
+}, 1000);
+
+// 3. MAP LOGIC
+function showMenu(id) {
+  document.getElementById(id + '-menu').classList.remove('hidden');
+}
+
+function closeMenus() {
+  document.querySelectorAll('.overlay').forEach(m => m.classList.add('hidden'));
+}
+
+function adjustZoom(amount) {
+  currentZoom += amount;
+  if (currentZoom < 0.5) currentZoom = 0.5;
+  if (currentZoom > 4) currentZoom = 4;
+  applyMapTransform();
+}
+
+function resetZoom() {
+  currentZoom = 1;
+  translateX = 0;
+  translateY = 0;
+  applyMapTransform();
+}
+
+function applyMapTransform() {
+  const mapImg = document.getElementById('tactical-map-img');
+  mapImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+}
+
+// 4. DRAGGING LOGIC
+const viewport = document.getElementById('map-viewport');
+
+viewport.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  viewport.style.cursor = 'grabbing';
+  startX = e.pageX - translateX;
+  startY = e.pageY - translateY;
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+  viewport.style.cursor = 'grab';
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  translateX = e.pageX - startX;
+  translateY = e.pageY - startY;
+  applyMapTransform();
+});
+
+function buyItem(cost, name) {
+  if (currentBalance >= cost) {
+    currentBalance -= cost;
+    // Update the money display
+    document.getElementById('balance').innerText = `$${currentBalance.toLocaleString()}`;
+    // Change the challenge text to show you bought it
+    document.getElementById('main-challenge-text').innerText = `You bought: ${name}!`;
+    alert("Purchase Successful!");
+  } else {
+    alert("Not enough money!");
+  }
+}
