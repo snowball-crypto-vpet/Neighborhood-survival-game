@@ -5,6 +5,17 @@ let isDragging = false;
 let startX, startY;
 let translateX = 0, translateY = 0;
 
+const challenges = [
+  "Scavenge the yard for 10 minutes.",
+  "Check the perimeter for intruders.",
+  "Ride both cirles in one go.",
+  "Collect 5 sticks for building.",
+  "Create sink and drying rack.",
+  "Create Oven and cooking station.",
+  "Hide from the neighbor's dog!",
+  "Water the tulips in the garden."
+];
+
 // 1. GAME FLOW
 function startGame() {
   document.getElementById('start-screen').classList.add('hidden');
@@ -27,6 +38,12 @@ function updateBalance(type) {
 // 2. CLOCK LOGIC
 setInterval(() => {
   gameMinutes++;
+  
+  // Every 10 minutes, change the challenge!
+  if (gameMinutes % 10 === 0) {
+    changeChallenge();
+  }
+
   let hours = Math.floor(gameMinutes / 60);
   let mins = gameMinutes % 60;
   let timeStr = (hours < 10 ? "0"+hours : hours) + ":" + (mins < 10 ? "0"+mins : mins);
@@ -94,4 +111,10 @@ function buyItem(cost, name) {
   } else {
     alert("Not enough money!");
   }
+}
+
+function changeChallenge() {
+  const randomIndex = Math.floor(Math.random() * challenges.length);
+  const newChallenge = challenges[randomIndex];
+  document.getElementById('main-challenge-text').innerText = `New Goal: ${newChallenge}`;
 }
