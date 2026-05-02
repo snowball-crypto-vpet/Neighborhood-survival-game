@@ -133,3 +133,86 @@ function changeChallenge() {
   const newChallenge = challenges[randomIndex];
   document.getElementById('main-challenge-text').innerText = `New Goal: ${newChallenge}`;
 }
+let currentSaveSlot = null;
+
+function openSaveMenu() {
+  showMenu('save');
+  renderSaveSlots();
+}
+
+function renderSaveSlots() {
+  const saveList = document.getElementById('save-list');
+  saveList.innerHTML = '';
+  
+  // We will check for 3 possible save slots
+  for (let i = 1; i <= 3; i++) {
+    const data = localStorage.getItem('neighborhood_save_' + i);
+    const slotDiv = document.createElement('div');
+    slotDiv.style.border = "1px solid #444";
+    slotDiv.style.margin = "5px";
+    slotDiv.style.padding = "5px";
+
+    if (data) {
+      const savedGame = JSON.parse(data);
+      slotDiv.innerHTML = `
+        <p>Slot ${i}: $${savedGame.balance}</p>
+        <button onclick="loadGame(${i})">LOAD</button>
+        <button onclick="deleteGame(${i})" style="background:red; color:white;">DEL</button>
+      `;
+    } else {
+      slotDiv.innerHTML = `<p>Slot ${i}: [EMPTY]</p>`;
+    }
+    saveList.appendChild(slotDiv);
+  }
+}
+
+function saveCurrentGame() {
+  if (!currentSaveSlot) currentSaveSlot = 1; // Default to slot 1 if new
+  const gameData = {
+    balance: currentBalance,
+    minutes: gameMinutes,
+    challenge: document.getElementById('main-challenge-text').innerText
+  };
+  localStorage.setItem('neighborhood_save_' + currentSaveSlot, JSON.stringify(gameData));
+}
+
+function loadGame(slot) {
+  const data = localStorage.getItem('neighborhood_save_' + slot);
+  if (data) {
+    const savedGame = JSON.parse(data);
+    currentBalance = savedGame.balance;
+    gameMinutes = savedGame.minutes;
+    currentSaveSlot = slot;
+    
+    document.getElementById('balance').innerText = `$${currentBalance.toLocaleString()}`;
+    document.getElementById('main-challenge-text').innerText = savedGame.challenge;
+    
+    closeMenus();
+    startGame(); // Skip the intro screen
+  }
+}
+
+function createNewGame() {
+  // Find first empty slot
+  for (let i = 1; i <= 3; i++) {
+    if (!localStorage.getItem('neighborhood_save_' + i)) {
+      currentSaveSlot = i;
+      currentBalance = 35; // Start fresh
+      gameMinutes = 360;
+      saveCurrentGame();
+      loadGame(i);
+      return;
+    }
+  }
+  alert("All slots full! Delete a game first.");
+}
+
+function deleteGame(slot) {
+  if (confirm("Delete this save forever?")) {
+    localStorage.removeItem('neighborhood_save_' + slot);
+    renderSaveSlots();
+  }
+}
+
+// AUTO-SAVE: Save every 30 seconds
+setInterval(saveCurrentGame, 30000);
