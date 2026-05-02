@@ -26,10 +26,22 @@ function startGame() {
 function updateBalance(type) {
   const amountInput = document.getElementById('amount');
   const amount = parseInt(amountInput.value);
-  if (isNaN(amount)) return;
   
-  if (type === 'spend') currentBalance -= amount;
-  else currentBalance += amount;
+  if (isNaN(amount) || amount <= 0) return;
+
+  if (type === 'spend') {
+    currentBalance -= amount;
+    document.getElementById('main-challenge-text').innerText = `You spent $${amount}.`;
+  } 
+  else if (type === 'request') {
+    // 50% chance of success (0.5)
+    if (Math.random() > 0.6) {
+      currentBalance += amount;
+      document.getElementById('main-challenge-text').innerText = `Request Accepted! You got $${amount}.`;
+    } else {
+      document.getElementById('main-challenge-text').innerText = `Request Denied! Better luck next time.`;
+    }
+  }
 
   document.getElementById('balance').innerText = `$${currentBalance.toLocaleString()}`;
   amountInput.value = '';
