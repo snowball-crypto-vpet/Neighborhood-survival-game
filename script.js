@@ -27,26 +27,29 @@ function updateBalance(type) {
   const amountInput = document.getElementById('amount');
   const amount = parseInt(amountInput.value);
   
-  if (isNaN(amount) || amount <= 0) return;
+  if (isNaN(amount)) {
+    alert("Please enter a number first!");
+    return;
+  }
 
   if (type === 'spend') {
     currentBalance -= amount;
-    document.getElementById('main-challenge-text').innerText = `You spent $${amount}.`;
+    alert("Spent: $" + amount);
   } 
   else if (type === 'request') {
-    // 50% chance of success (0.5)
-    if (Math.random() > 0.6) {
+    // This creates a 50/50 coin flip
+    if (Math.random() > 0.5) {
       currentBalance += amount;
-      document.getElementById('main-challenge-text').innerText = `Request Accepted! You got $${amount}.`;
+      alert("SUCCESS! You received $" + amount);
     } else {
-      document.getElementById('main-challenge-text').innerText = `Request Denied! Better luck next time.`;
+      alert("DENIED! No money this time.");
     }
   }
 
+  // This updates the big gold number on your screen
   document.getElementById('balance').innerText = `$${currentBalance.toLocaleString()}`;
-  amountInput.value = '';
+  amountInput.value = ''; // Clears the box
 }
-
 // 2. CLOCK LOGIC
 setInterval(() => {
   gameMinutes++;
